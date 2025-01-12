@@ -6,14 +6,12 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.HandlerThread
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import kotlinx.coroutines.delay
 
-class ConnectionActivity : AppCompatActivity() {
+class ConnectionActivity : AppCompatActivity(), TouchpadView.OnTouchpadMoveListener {
 
     private companion object {
         private const val FIRST_CONNECTION_MESSAGE = "HELLO"
@@ -28,12 +26,15 @@ class ConnectionActivity : AppCompatActivity() {
 
     lateinit var connection: NetworkConnection
     lateinit var waitingConnectionFragment: WaitingConnectionFragment
+    lateinit var touchpadFragment: Fragment
+    lateinit var connectionHandler: Handler
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_connection)
 
         waitingConnectionFragment = WaitingConnectionFragment()
+        touchpadFragment = TouchpadFragment()
 
         supportFragmentManager.beginTransaction()
             .add(R.id.ConnectionFragmentContainer, waitingConnectionFragment)
@@ -78,6 +79,11 @@ class ConnectionActivity : AppCompatActivity() {
                     connection.writeToConnection(SETUP_V1_REL)
                     message = connection.readFromConnection();
                     if(message == SETUP_SUCCESS){
+                        runOnUiThread {
+                            supportFragmentManager.beginTransaction()
+                                .replace(R.id.ConnectionFragmentContainer, touchpadFragment)
+                                .commit()
+                        }
                         return@Thread
                     }
                 }
@@ -102,7 +108,7 @@ class ConnectionActivity : AppCompatActivity() {
 
         val handlerThread = HandlerThread("ConnectionThread")
         handlerThread.start()
-        val connectionHandler = Handler(handlerThread.looper) {
+        connectionHandler = Handler(handlerThread.looper) {
             true
         }
 
@@ -113,5 +119,27 @@ class ConnectionActivity : AppCompatActivity() {
         Toast.makeText(context, getString(R.string.connection_failed), Toast.LENGTH_LONG).show()
         val intent = Intent(this, MainActivity::class.java)
         startActivity(intent)
+    }
+
+    override fun onTouchpadMove(deltaX: Float, deltaY: Float) {
+        val x = deltaX.toInt()
+        val y = deltaY.toInt()
+        connectionHandler.post {
+            if(x != 0) {
+                connection.writeToConnection("rx$x")
+            }
+            if(y != 0) {
+                connection.writeToConnection("ry$y")
+            }
+        }
+    }
+
+    override fun onClick() {
+        connectionHandler.post {
+            connection.writeToConnection("ml1")
+            connectionHandler.postDelayed({
+                connection.writeToConnection("ml0")
+            }, 500)
+        }
     }
 }

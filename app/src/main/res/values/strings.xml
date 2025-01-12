@@ -8,4 +8,6 @@
     <string name="connecting_confirmation_required">Please, accept connection on your pc</string>
     <string name="connection_failed">Connection failed!</string>
     <string name="cancel">Cancel</string>
+    <string name="left_btn">L</string>
+    <string name="right_btn">R</string>
 </resources>

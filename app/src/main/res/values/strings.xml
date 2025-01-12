@@ -4,4 +4,8 @@
     <string name="ip_and_port_hint">127.0.0.1:5123</string>
     <string name="ip_and_port_validation_error">Invalid format, please type ip:port or ip</string>
     <string name="pc_app_link_hint">Download pc app:\n https://github.com/CatInBeard/remote-mouse</string>
+    <string name="connecting">Connecting…</string>
+    <string name="connecting_confirmation_required">Please, accept connection on your pc</string>
+    <string name="connection_failed">Connection failed!</string>
+    <string name="cancel">Cancel</string>
 </resources>

@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">Remote mouse</string>
+    <string name="connect_btn_text">Connect</string>
+    <string name="ip_and_port_hint">127.0.0.1:5123</string>
+    <string name="ip_and_port_validation_error">Invalid format, please type ip:port or ip</string>
+    <string name="pc_app_link_hint">Download pc app:\n https://github.com/CatInBeard/remote-mouse</string>
 </resources>

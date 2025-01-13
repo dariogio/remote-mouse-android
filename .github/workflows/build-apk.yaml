@@ -1,0 +1,16 @@
+name: apk builder
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Build apk
+      run:  ./gradlew assembleRelease
+    - name: Archive production artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: Android app
+        path: app/build/outputs/apk/release/*.apk

@@ -5,6 +5,8 @@ import android.graphics.Canvas
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
+import java.lang.Math.pow
+import kotlin.math.sqrt
 
 class TouchpadView : View {
     private var previousX = 0f
@@ -56,21 +58,17 @@ class TouchpadView : View {
             MotionEvent.ACTION_MOVE -> {
                 val deltaX = currentX - previousX
                 val deltaY = currentY - previousY
-                if (listener != null) {
-                    listener!!.onTouchpadMove(deltaX, deltaY)
+
+                if(Math.sqrt((deltaX * deltaX + deltaY * deltaY).toDouble()) > 20){
+                    if (listener != null) {
+                        listener!!.onTouchpadMove(deltaX, deltaY)
+                    }
+                    previousX = currentX
+                    previousY = currentY
                 }
-                previousX = currentX
-                previousY = currentY
             }
 
             MotionEvent.ACTION_UP -> {
-                val deltaX = currentX - previousX
-                val deltaY = currentY - previousY
-                if (listener != null) {
-                    if(deltaX <0.5 && deltaY < 0.5) {
-                        listener!!.onClick()
-                    }
-                }
                 previousX = 0f
                 previousY = 0f
             }

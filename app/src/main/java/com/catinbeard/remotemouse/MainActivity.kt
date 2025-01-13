@@ -2,6 +2,8 @@ package com.catinbeard.remotemouse
 
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
@@ -15,6 +17,8 @@ class MainActivity : AppCompatActivity() {
         private const val IP_PATTERN = "^([0-9]{1,3}\\.){3}[0-9]{1,3}$"
         private const val DEFAULT_PORT = "5123"
     }
+
+    private var doubleBackToExitPressedOnce = false
 
     private lateinit var editText: EditText
     private lateinit var buttonConnect: Button
@@ -50,4 +54,20 @@ class MainActivity : AppCompatActivity() {
 
         }
     }
+
+    @Deprecated("Deprecated in Java")
+    override fun onBackPressed() {
+        if (doubleBackToExitPressedOnce) {
+            finishAffinity()
+            return super.onBackPressed()
+        }
+
+        this.doubleBackToExitPressedOnce = true
+        Toast.makeText(this, getString(R.string.double_press_to_exit), Toast.LENGTH_SHORT).show()
+
+        Handler(Looper.getMainLooper()).postDelayed({
+            doubleBackToExitPressedOnce = false
+        }, 2000)
+    }
+
 }

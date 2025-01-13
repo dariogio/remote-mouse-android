@@ -5,13 +5,13 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.HandlerThread
+import android.os.Looper
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import kotlinx.coroutines.delay
 
-class ConnectionActivity : AppCompatActivity(), TouchpadView.OnTouchpadMoveListener {
+class ConnectionActivity : AppCompatActivity(), TouchpadFragment.FullTouchpadListener {
 
     private companion object {
         private const val FIRST_CONNECTION_MESSAGE = "HELLO"
@@ -23,6 +23,8 @@ class ConnectionActivity : AppCompatActivity(), TouchpadView.OnTouchpadMoveListe
         private const val SETUP_SUCCESS = "SETUP_SUCCESS"
 
     }
+
+    private var doubleBackToExitPressedOnce = false
 
     lateinit var connection: NetworkConnection
     lateinit var waitingConnectionFragment: WaitingConnectionFragment
@@ -124,22 +126,64 @@ class ConnectionActivity : AppCompatActivity(), TouchpadView.OnTouchpadMoveListe
     override fun onTouchpadMove(deltaX: Float, deltaY: Float) {
         val x = deltaX.toInt()
         val y = deltaY.toInt()
-        connectionHandler.post {
-            if(x != 0) {
-                connection.writeToConnection("rx$x")
-            }
-            if(y != 0) {
-                connection.writeToConnection("ry$y")
-            }
+
+        if(x != 0) {
+            writeToConnection("rx$x")
+        }
+        if(y != 0) {
+            writeToConnection("ry$y")
         }
     }
 
     override fun onClick() {
+        writeToConnection("ml1")
+        connectionHandler.postDelayed({
+            writeToConnection("ml0")
+        }, 10)
+    }
+
+    @Deprecated("Deprecated in Java")
+    override fun onBackPressed() {
+        if (doubleBackToExitPressedOnce) {
+            val intent = Intent(this, MainActivity::class.java)
+            startActivity(intent)
+            return super.onBackPressed()
+        }
+
+        this.doubleBackToExitPressedOnce = true
+        Toast.makeText(this, getString(R.string.double_press_to_exit), Toast.LENGTH_SHORT).show()
+
+        Handler(Looper.getMainLooper()).postDelayed({
+            doubleBackToExitPressedOnce = false
+        }, 2000)
+    }
+
+    override fun onLeftMouseDown() {
+        writeToConnection("ml1")
+    }
+
+    override fun onLeftMouseUp() {
+        writeToConnection("ml0")
+    }
+
+    override fun onRightMouseDown() {
+        writeToConnection("mr1")
+    }
+
+    override fun onRightMouseUp() {
+        writeToConnection("mr0")
+    }
+
+    private fun writeToConnection(string: String){
         connectionHandler.post {
-            connection.writeToConnection("ml1")
-            connectionHandler.postDelayed({
-                connection.writeToConnection("ml0")
-            }, 500)
+            if(!connection.socket?.isConnected!!){
+                runOnUiThread{
+                    runOnUiThread {
+                        closeConnection(this);
+                    }
+                }
+            }
+            connection.writeToConnection(string)
         }
     }
 }

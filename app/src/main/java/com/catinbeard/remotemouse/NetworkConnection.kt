@@ -10,7 +10,7 @@ import java.nio.charset.StandardCharsets
 
 class NetworkConnection(private val ip: String, private val port: Int, private val protocol: ProtocolType): AutoCloseable {
 
-    private var socket: Socket? = null
+    var socket: Socket? = null
     private var serverSocket: ServerSocket? = null
     private var datagramSocket: DatagramSocket? = null
 

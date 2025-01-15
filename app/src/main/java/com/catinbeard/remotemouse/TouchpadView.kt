@@ -5,6 +5,7 @@ import android.graphics.Canvas
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
+import androidx.appcompat.app.AppCompatActivity.MODE_PRIVATE
 import java.lang.Math.pow
 import kotlin.math.sqrt
 
@@ -18,13 +19,19 @@ class TouchpadView : View {
     }
 
     private var listener: OnTouchpadMoveListener? = null
+    private var accuracy: Float = 20F
 
     fun setOnTouchpadMoveListener(listener: OnTouchpadMoveListener?) {
         this.listener = listener
     }
 
 
-    constructor(context: Context?) : super(context)
+    constructor(context: Context?) : super(context){
+        if(context != null) {
+            val sharedPreferences = context.getSharedPreferences("app_prefs", MODE_PRIVATE)
+            accuracy = sharedPreferences.getFloat(context.getString(R.string.settings_accuracy), 20F)
+        }
+    }
 
     constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs)
 
@@ -59,7 +66,7 @@ class TouchpadView : View {
                 val deltaX = currentX - previousX
                 val deltaY = currentY - previousY
 
-                if(Math.sqrt((deltaX * deltaX + deltaY * deltaY).toDouble()) > 20){
+                if(Math.sqrt((deltaX * deltaX + deltaY * deltaY).toDouble()) > accuracy){
                     if (listener != null) {
                         listener!!.onTouchpadMove(deltaX, deltaY)
                     }

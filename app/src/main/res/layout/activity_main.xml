@@ -19,26 +19,54 @@
 
         <EditText
             android:id="@+id/ip_and_port"
+            android:minWidth="200dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:gravity="center"
+            android:maxLines="1"
+            android:inputType="text"
+            android:ellipsize="end"
+            android:scrollHorizontally="true"
             android:hint="@string/ip_and_port_hint" />
 
         <Button
             android:id="@+id/button_connect"
+            app:icon="@drawable/baseline_contactless_24"
+            app:iconGravity="textStart"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/connect_btn_text" />
 
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/pc_app_link_hint"
+    <LinearLayout
+        android:id="@+id/container2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:autoLink="web"
+        android:orientation="vertical"
         android:gravity="center"
-        android:text="@string/pc_app_link_hint"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/container" />
+        app:layout_constraintTop_toBottomOf="@id/container">
+
+    <Button
+        android:minWidth="200dp"
+        android:id="@+id/settings_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/settings"
+        app:icon="@drawable/baseline_settings_24"
+        app:iconGravity="textStart"
+        android:gravity="center"/>
+
+        <TextView
+            android:id="@+id/pc_app_link_hint"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:autoLink="web"
+            android:gravity="center"
+            android:text="@string/pc_app_link_hint" />
+
+    </LinearLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

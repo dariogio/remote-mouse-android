@@ -22,6 +22,7 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var editText: EditText
     private lateinit var buttonConnect: Button
+    private lateinit var buttonSettings: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,6 +30,7 @@ class MainActivity : AppCompatActivity() {
 
         editText = findViewById(R.id.ip_and_port)
         buttonConnect = findViewById(R.id.button_connect)
+        buttonSettings = findViewById(R.id.settings_button)
 
         val ipPortSettingName = getString(R.string.settings_ip)
         val sharedPreferences = getSharedPreferences("app_prefs", MODE_PRIVATE)
@@ -52,6 +54,10 @@ class MainActivity : AppCompatActivity() {
                 Toast.makeText(this, getString(R.string.ip_and_port_validation_error), Toast.LENGTH_SHORT).show()
             }
 
+        }
+        buttonSettings.setOnClickListener {
+            val intent = Intent(this, SettingsActivity::class.java)
+            startActivity(intent)
         }
     }
 

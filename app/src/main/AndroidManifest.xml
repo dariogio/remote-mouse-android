@@ -28,6 +28,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".ConnectionActivity" />
+        <activity android:name=".SettingsActivity" />
     </application>
 
 </manifest>

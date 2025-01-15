@@ -2,6 +2,7 @@ package com.catinbeard.remotemouse
 
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.os.Handler
 import android.os.HandlerThread
@@ -31,6 +32,10 @@ class ConnectionActivity : AppCompatActivity(), TouchpadFragment.FullTouchpadLis
     lateinit var touchpadFragment: Fragment
     lateinit var connectionHandler: Handler
 
+    private lateinit var sharedPreferences: SharedPreferences
+    private var accuracy: Float = 20F
+    private var speed: Float = 1F
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_connection)
@@ -46,6 +51,7 @@ class ConnectionActivity : AppCompatActivity(), TouchpadFragment.FullTouchpadLis
         val ipPortSettingName = getString(R.string.settings_ip)
         val sharedPreferences = getSharedPreferences("app_prefs", MODE_PRIVATE)
         val ipPort = sharedPreferences?.getString(ipPortSettingName, "") ?: ":"
+        speed = sharedPreferences.getFloat(getString(R.string.settings_speed), 1F)
 
         val connectionInitThread = Thread {
             try {
@@ -124,8 +130,8 @@ class ConnectionActivity : AppCompatActivity(), TouchpadFragment.FullTouchpadLis
     }
 
     override fun onTouchpadMove(deltaX: Float, deltaY: Float) {
-        val x = deltaX.toInt()
-        val y = deltaY.toInt()
+        val x = (deltaX*speed).toInt()
+        val y = (deltaY*speed).toInt()
 
         if(x != 0) {
             writeToConnection("rx$x")
